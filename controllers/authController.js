@@ -8,7 +8,7 @@ async function registerNewUser(req, res, next) {
   try {
     const user = await createNewUser(req.body);
 
-    return res.json(user);
+    return res.status(201).json(user);
   } catch (error) {
     next(error);
   }

@@ -56,7 +56,7 @@ async function createProduct(req, res, next) {
 
     const result = await createNewProduct(req.body);
 
-    return res.json(result);
+    return res.status(201).json(result);
   } catch (error) {
     next(error);
   }
@@ -74,7 +74,7 @@ async function updateProduct(req, res, next) {
 
     const result = await updateProductById(req.params.id, req.body);
 
-    return res.json(result);
+    return res.status(201).json(result);
   } catch (error) {
     next(error);
   }
