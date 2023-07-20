@@ -4,9 +4,9 @@ const {
   deleteProductById,
   createNewProduct,
   updateProductById,
-} = require('../schemas/productSchema');
+} = require('../schemas/productSchemas/productSchema');
 const { getCurrency } = require('../helpers/currency');
-const joiProductSchema = require('../schemas/productJoiSchema');
+const joiProductSchema = require('../schemas/productSchemas/productJoiSchema');
 
 async function allProducts(req, ress, next) {
   try {

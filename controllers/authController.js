@@ -2,10 +2,19 @@ const {
   createNewUser,
   loginInAccount,
   logoutFromAcc,
-} = require('../schemas/userSchema');
+} = require('../schemas/userSchemas/userSchema');
+const joiUserSchema = require('../schemas/userSchemas/userJoiSchema');
 
 async function registerNewUser(req, res, next) {
   try {
+    const { error } = joiUserSchema.validate(req.body);
+
+    if (error) {
+      const err = new Error('missing fields');
+      err.status = 400;
+      throw err;
+    }
+
     const user = await createNewUser(req.body);
 
     return res.status(201).json(user);

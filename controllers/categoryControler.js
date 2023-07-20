@@ -5,8 +5,9 @@ const {
   deleteCategoryById,
   updateCategoryById,
   showAllProductsInCategory,
-} = require('../schemas/categorySchema');
+} = require('../schemas/categorySchemas/categorySchema');
 const { getCurrency } = require('../helpers/currency');
+const joiCategorySchema = require('../schemas/categorySchemas/categoryJoiSchema');
 
 async function allCategories(req, res, next) {
   try {
@@ -30,6 +31,14 @@ async function categoryById(req, res, next) {
 
 async function createCategory(req, res, next) {
   try {
+    const { error } = joiCategorySchema.validate(req.body);
+
+    if (error) {
+      const err = new Error('missing fields');
+      err.status = 400;
+      throw err;
+    }
+
     const result = await createNewCategory(req.body);
 
     return res.status(201).json(result);

@@ -1,4 +1,4 @@
-const { User } = require('../schemas/userSchema');
+const { User } = require('../schemas/userSchemas/userSchema');
 const jwt = require('jsonwebtoken');
 
 async function auth(req, res, next) {
