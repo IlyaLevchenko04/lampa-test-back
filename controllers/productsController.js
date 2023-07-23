@@ -5,12 +5,17 @@ const {
   createNewProduct,
   updateProductById,
 } = require('../schemas/productSchemas/productSchema');
-const { getCurrency } = require('../helpers/currency');
+const { getCurrency } = require('../helpers/currency/currency');
 const joiProductSchema = require('../schemas/productSchemas/productJoiSchema');
 
 async function allProducts(req, ress, next) {
   try {
-    const { limit, page, filter, currency = 'UAH' } = req.query;
+    const {
+      limit = 10,
+      page = 1,
+      filter = 'ascendingDate',
+      currency = 'UAH',
+    } = req.query;
 
     const monoCurrency = await getCurrency(currency);
 

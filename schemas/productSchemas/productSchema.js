@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const { errorHandler } = require('../../helpers/errors/errorHandler');
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
@@ -33,7 +33,7 @@ const productSchema = new Schema({
 
 const Product = mongoose.model('Product', productSchema);
 
-async function getAllProducts(page = 1, productLimit = 10, filter, currency) {
+async function getAllProducts(page, productLimit, filter, currency) {
   const skip = Number(page);
   const limit = Number(productLimit);
   const data = await Product.find()
@@ -68,6 +68,10 @@ async function getAllProducts(page = 1, productLimit = 10, filter, currency) {
 async function getOneProductById(id, currency) {
   const data = await Product.findById(`${id}`);
 
+  if (!data) {
+    throw errorHandler(`Product with id(${id}) is not found`, 404);
+  }
+
   data.price = (Number(data.price) / Number(currency.sell)).toFixed(2);
   data.currency = currency.currency;
 
@@ -76,6 +80,10 @@ async function getOneProductById(id, currency) {
 
 async function deleteProductById(id) {
   const data = await Product.findByIdAndDelete(id);
+
+  if (!data) {
+    throw errorHandler(`Product with id(${id}) is not found`, 404);
+  }
 
   return data;
 }
@@ -108,6 +116,10 @@ async function updateProductById(id, data) {
     { ...data },
     { new: true }
   );
+
+  if (!product) {
+    throw errorHandler(`Product with id(${id}) is not found`, 404);
+  }
 
   return product;
 }

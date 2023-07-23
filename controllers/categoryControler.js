@@ -6,8 +6,9 @@ const {
   updateCategoryById,
   showAllProductsInCategory,
 } = require('../schemas/categorySchemas/categorySchema');
-const { getCurrency } = require('../helpers/currency');
+const { getCurrency } = require('../helpers/currency/currency');
 const joiCategorySchema = require('../schemas/categorySchemas/categoryJoiSchema');
+const { errorHandler } = require('../helpers/errors/errorHandler');
 
 async function allCategories(req, res, next) {
   try {
@@ -80,6 +81,13 @@ async function getAllProductsInCategory(req, res, next) {
       filter,
       monoCurrency
     );
+
+    if (!result) {
+      throw errorHandler(
+        `Category with id(${req.params.id}) is not found`,
+        404
+      );
+    }
 
     return res.json(result);
   } catch (error) {
