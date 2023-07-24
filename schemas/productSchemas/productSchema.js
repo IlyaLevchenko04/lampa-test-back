@@ -1,72 +1,67 @@
 const mongoose = require('mongoose');
-
+const errorsEnum = require('../../helpers/errors/errorsEnum');
+const CustomError = require('../../helpers/errors/customError');
+const {
+  products: productsOrdering,
+  getOrdering,
+} = require('../../constants/sort/index');
 const Schema = mongoose.Schema;
 
-const productSchema = new Schema({
-  price: {
-    type: Number,
+const productSchema = new Schema(
+  {
+    price: {
+      type: Number,
+    },
+    title: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    mainPhoto: {
+      type: String,
+    },
+    photos: {
+      type: Array.of(String),
+    },
+    currency: {
+      type: String,
+    },
+    createDate: {
+      type: Date,
+      default: Date.now,
+    },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'category',
+    },
   },
-  title: {
-    type: String,
-  },
-  description: {
-    type: String,
-  },
-  mainPhoto: {
-    type: String,
-  },
-  photos: {
-    type: Array.of(String),
-  },
-  currency: {
-    type: String,
-  },
-  createDate: {
-    type: Date,
-    default: Date.now,
-  },
-  categoryId: {
-    type: Schema.Types.ObjectId,
-    ref: 'category',
-  },
-});
+  { versionKey: false }
+);
 
 const Product = mongoose.model('Product', productSchema);
 
-async function getAllProducts(page = 1, productLimit = 10, filter, currency) {
+async function getAllProducts(page, productLimit, filter, currency) {
   const skip = Number(page);
   const limit = Number(productLimit);
   const data = await Product.find()
     .skip((skip - 1) * limit)
-    .limit(limit);
+    .limit(limit)
+    .sort(getOrdering(productsOrdering, filter));
 
-  const trueData = data.map(data => {
+  return data.map(data => {
     data.price = (Number(data.price) / Number(currency.sell)).toFixed(2);
     data.currency = currency.currency;
     return data;
   });
-
-  if (filter === 'ascendingPrice') {
-    return trueData.sort((a, b) => b.price - a.price);
-  }
-
-  if (filter === 'descendingPrice') {
-    return trueData.sort((a, b) => a.price - b.price);
-  }
-
-  if (filter === 'descendingDate') {
-    return trueData.sort((a, b) => a.createDate - b.createDate);
-  }
-
-  if (filter === 'ascendingDate') {
-    return trueData.sort((a, b) => b.createDate - a.createDate);
-  }
-
-  return trueData.sort((a, b) => b.createDate - a.createDate);
 }
 
 async function getOneProductById(id, currency) {
   const data = await Product.findById(`${id}`);
+
+  if (!data) {
+    throw new CustomError(errorsEnum.PRODUCT_NOT_FOUND, id);
+  }
 
   data.price = (Number(data.price) / Number(currency.sell)).toFixed(2);
   data.currency = currency.currency;
@@ -75,9 +70,18 @@ async function getOneProductById(id, currency) {
 }
 
 async function deleteProductById(id) {
-  const data = await Product.findByIdAndDelete(id);
+  try {
+    const data = await Product.findByIdAndDelete(id);
+    console.log(data);
 
-  return data;
+    if (!data) {
+      throw new CustomError(errorsEnum.PRODUCT_NOT_FOUND, id);
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function createNewProduct({
@@ -108,6 +112,10 @@ async function updateProductById(id, data) {
     { ...data },
     { new: true }
   );
+
+  if (!product) {
+    throw new CustomError(errorsEnum.PRODUCT_NOT_FOUND, id);
+  }
 
   return product;
 }

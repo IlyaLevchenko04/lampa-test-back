@@ -3,16 +3,17 @@ const {
   loginInAccount,
   logoutFromAcc,
 } = require('../schemas/userSchemas/userSchema');
+const { createNewPairOfTokens } = require('../helpers/auth/index');
 const joiUserSchema = require('../schemas/userSchemas/userJoiSchema');
+const CustomError = require('../helpers/errors/customError');
+const errorsEnum = require('../helpers/errors/errorsEnum');
 
 async function registerNewUser(req, res, next) {
   try {
     const { error } = joiUserSchema.validate(req.body);
 
     if (error) {
-      const err = new Error('missing fields');
-      err.status = 400;
-      throw err;
+      throw new CustomError(errorsEnum.VALIDATION_ERROR);
     }
 
     const user = await createNewUser(req.body);
@@ -44,4 +45,14 @@ async function logoutUser(req, res, next) {
   }
 }
 
-module.exports = { registerNewUser, loginUser, logoutUser };
+async function refreshTokens(req, res, next) {
+  try {
+    const tokens = await createNewPairOfTokens(req.body.refreshToken);
+
+    res.json(tokens);
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { registerNewUser, loginUser, logoutUser, refreshTokens };
