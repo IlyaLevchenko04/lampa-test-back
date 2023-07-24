@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const swaggerUI = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
-const productsRoute = require('./routes/api/productsRoute');
-const categoryRoute = require('./routes/api/categoryRoute');
-const authRoute = require('./routes/api/authRoute');
+const productsRoute = require('./routes/api/v1/products/productsRoute');
+const categoryRoute = require('./routes/api/v1/categories/categoryRoute');
+const authRoute = require('./routes/api/v1/auth/authRoute');
+const { errorHandler } = require('./middlewares/errorHandler');
 require('dotenv').config();
 
 const app = express();
@@ -19,7 +20,7 @@ const swaggerOptions = {
         'This routes allow to manipulate with products, categories and users.',
       contact: {
         name: 'API Support',
-        email: 'nneo2086@gmail.com',
+        email: 'nneo2086@gmail.com/',
       },
       version: '1.0',
     },
@@ -33,7 +34,7 @@ const swaggerOptions = {
         url: `http://localhost:${process.env.PORT}/api`,
       },
     ],
-    schemes: ['http'],
+    schemes: ['https'],
   },
   apis: ['server.js', './routes/**/*.js'],
 };
@@ -41,6 +42,16 @@ const apiSpecification = swaggerJsdoc(swaggerOptions);
 
 app.use(cors());
 app.use(express.json());
+
+app.use((req, res, next) => {
+  const { limit } = req.query;
+
+  if (Number(limit) > 1000) {
+    req.query.limit = '1000';
+  }
+
+  next();
+});
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(apiSpecification));
 
@@ -51,11 +62,11 @@ app.use('/api/category', categoryRoute);
 app.use('/api/auth', authRoute);
 
 app.use((req, res) => {
-  res.status(404).json({ message: 'Not found' });
+  res.status(404).sendFile(`${__dirname}/template404/index.html`);
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.status).json({ message: err.message });
-});
+app.use(errorHandler);
+
+// swager add currency
 
 module.exports = app;

@@ -1,5 +1,6 @@
 const { User } = require('../schemas/userSchemas/userSchema');
 const jwt = require('jsonwebtoken');
+const { tokenTypesEnum } = require('../helpers/auth/index');
 
 async function auth(req, res, next) {
   const { authorization = '' } = req.headers;
@@ -10,12 +11,14 @@ async function auth(req, res, next) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const { id } = jwt.verify(token, process.env.SECRET_KEY);
-    const user = await User.findById(id);
+    const { userId, type } = jwt.verify(token, process.env.SECRET_KEY);
 
-    if (!user || !user.token) {
+    if (type !== tokenTypesEnum.ACCESS) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
+
+    const user = await User.findById(userId);
+
     req.user = user;
     next();
   } catch (error) {

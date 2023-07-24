@@ -7,6 +7,8 @@ const {
 } = require('../schemas/productSchemas/productSchema');
 const { getCurrency } = require('../helpers/currency/currency');
 const joiProductSchema = require('../schemas/productSchemas/productJoiSchema');
+const CustomError = require('../helpers/errors/customError');
+const errorsEnum = require('../helpers/errors/errorsEnum');
 
 async function allProducts(req, ress, next) {
   try {
@@ -40,6 +42,7 @@ async function getById(req, res, next) {
 }
 
 async function deleteProduct(req, res, next) {
+  console.log(req);
   try {
     const result = await deleteProductById(req.params.id);
 
@@ -54,9 +57,7 @@ async function createProduct(req, res, next) {
     const { error } = joiProductSchema.validate(req.body);
 
     if (error) {
-      const err = new Error('missing fields');
-      err.status = 400;
-      throw err;
+      throw new CustomError(errorsEnum.VALIDATION_ERROR);
     }
 
     const result = await createNewProduct(req.body);
@@ -72,9 +73,7 @@ async function updateProduct(req, res, next) {
     const { error } = joiProductSchema.validate(req.body);
 
     if (error) {
-      const err = new Error('missing fields');
-      err.status = 400;
-      throw err;
+      throw new CustomError(errorsEnum.VALIDATION_ERROR);
     }
 
     const result = await updateProductById(req.params.id, req.body);

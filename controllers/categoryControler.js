@@ -8,7 +8,8 @@ const {
 } = require('../schemas/categorySchemas/categorySchema');
 const { getCurrency } = require('../helpers/currency/currency');
 const joiCategorySchema = require('../schemas/categorySchemas/categoryJoiSchema');
-const { errorHandler } = require('../helpers/errors/errorHandler');
+const CustomError = require('../helpers/errors/customError');
+const errorsEnum = require('../helpers/errors/errorsEnum');
 
 async function allCategories(req, res, next) {
   try {
@@ -35,9 +36,7 @@ async function createCategory(req, res, next) {
     const { error } = joiCategorySchema.validate(req.body);
 
     if (error) {
-      const err = new Error('missing fields');
-      err.status = 400;
-      throw err;
+      throw new CustomError(errorsEnum.VALIDATION_ERROR);
     }
 
     const result = await createNewCategory(req.body);
@@ -81,13 +80,6 @@ async function getAllProductsInCategory(req, res, next) {
       filter,
       monoCurrency
     );
-
-    if (!result) {
-      throw errorHandler(
-        `Category with id(${req.params.id}) is not found`,
-        404
-      );
-    }
 
     return res.json(result);
   } catch (error) {

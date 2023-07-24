@@ -4,8 +4,9 @@ const {
   registerNewUser,
   loginUser,
   logoutUser,
-} = require('../../controllers/authController');
-const { auth } = require('../../middlewares/authMiddlware');
+  refreshTokens,
+} = require('../../../../controllers/authController');
+const { auth } = require('../../../../middlewares/authMiddlware');
 
 /**
  * @openapi
@@ -14,7 +15,7 @@ const { auth } = require('../../middlewares/authMiddlware');
  *     tags:
  *       - Auth
  *     summary: create user.
- *     description: Method for creating user.
+ *     description: Method for creating user. Required fields name, email, password.
 
  *
  *     responses:
@@ -38,7 +39,7 @@ router.post('/register', registerNewUser);
  *     tags:
  *       - Auth
  *     summary: login in account of user.
- *     description: Method for login in account of user.
+ *     description: Method for login in account of user. Required fields email, password.
 
  *
  *     responses:
@@ -60,13 +61,29 @@ router.post('/login', loginUser);
  *       - Auth
  *     summary: logout from account of user.
  *     description: Method for logout from account of user.
-
  *
  *     responses:
  *       201:
  *         description: Returns messsage Logout success.
- * 
+ *
  */
 
 router.post('/logout', auth, logoutUser);
+
+/**
+ * @openapi
+ * /refreshToken:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: refresh tokens .
+ *     description: Method for refreshing tokens.
+ *
+ *     responses:
+ *       201:
+ *         description: Returns new pair of tokens % acsessToken, refreshToken%.
+ *
+ */
+
+router.post('/refreshToken', refreshTokens);
 module.exports = router;

@@ -1,5 +1,7 @@
+const CustomError = require('../helpers/errors/customError');
+const errorsEnum = require('../helpers/errors/errorsEnum');
+
 const ObjectId = require('mongoose').Types.ObjectId;
-const { errorHandler } = require('../helpers/errors/errorHandler');
 
 async function isValidObjId(req, res, next) {
   try {
@@ -8,7 +10,7 @@ async function isValidObjId(req, res, next) {
     const isIdValid = ObjectId.isValid(id);
 
     if (!isIdValid) {
-      throw errorHandler('Id is not the ObjectId type', 415);
+      throw new CustomError(errorsEnum.INVALID_OBJ_ID);
     }
 
     next();

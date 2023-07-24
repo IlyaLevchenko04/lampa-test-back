@@ -7,16 +7,16 @@ const {
   deleteCategory,
   updateCategory,
   getAllProductsInCategory,
-} = require('../../controllers/categoryControler');
-const { auth } = require('../../middlewares/authMiddlware');
-const { isValidObjId } = require('../../middlewares/isValidObjId');
+} = require('../../../../controllers/categoryControler');
+const { auth } = require('../../../../middlewares/authMiddlware');
+const { isValidObjId } = require('../../../../middlewares/isValidObjId');
 
 /**
  * @openapi
  * /category:
  *   get:
  *     tags:
- *       - Category
+ *       - Categories
  *     summary: get all categories.
  *     description: Method for getting all categories.
  *     responses:
@@ -32,7 +32,7 @@ router.get('/', allCategories);
  * /category/:id:
  *   get:
  *     tags:
- *       - Category
+ *       - Categories
  *     summary: get one category by id.
  *     description: Method for getting one category by id.
  *     parameters:
@@ -57,7 +57,7 @@ router.get('/:id', isValidObjId, categoryById);
  * /category:
  *   post:
  *     tags:
- *       - Category
+ *       - Categories
  *     summary: create category.
  *     description: Method for creating category.
  *     responses:
@@ -73,7 +73,7 @@ router.post('/', auth, createCategory);
  * /category/:id:
  *   delete:
  *     tags:
- *       - Category
+ *       - Categories
  *     summary: delete one category by id.
  *     description: Method for deleting one category by id.
  *     parameters:
@@ -105,7 +105,6 @@ router.delete('/:id', auth, isValidObjId, deleteCategory);
  *       - in: path
  *         name: id
  *         required: true
-
  *
  *     responses:
  *       200:
@@ -123,7 +122,7 @@ router.put('/:id', auth, isValidObjId, updateCategory);
  * /category/:id/product:
  *   get:
  *     tags:
- *       - Category
+ *       - Categories
  *     summary: get all products  in category by id of category.
  *     description: Method for getting all products in category by id of category.
  *     parameters:

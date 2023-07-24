@@ -1,35 +1,43 @@
 const mongoose = require('mongoose');
-const { errorHandler } = require('../../helpers/errors/errorHandler');
+const errorsEnum = require('../../helpers/errors/errorsEnum');
+const CustomError = require('../../helpers/errors/customError');
+const {
+  products: productsOrdering,
+  getOrdering,
+} = require('../../constants/sort/index');
 const Schema = mongoose.Schema;
 
-const productSchema = new Schema({
-  price: {
-    type: Number,
+const productSchema = new Schema(
+  {
+    price: {
+      type: Number,
+    },
+    title: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    mainPhoto: {
+      type: String,
+    },
+    photos: {
+      type: Array.of(String),
+    },
+    currency: {
+      type: String,
+    },
+    createDate: {
+      type: Date,
+      default: Date.now,
+    },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'category',
+    },
   },
-  title: {
-    type: String,
-  },
-  description: {
-    type: String,
-  },
-  mainPhoto: {
-    type: String,
-  },
-  photos: {
-    type: Array.of(String),
-  },
-  currency: {
-    type: String,
-  },
-  createDate: {
-    type: Date,
-    default: Date.now,
-  },
-  categoryId: {
-    type: Schema.Types.ObjectId,
-    ref: 'category',
-  },
-});
+  { versionKey: false }
+);
 
 const Product = mongoose.model('Product', productSchema);
 
@@ -38,38 +46,21 @@ async function getAllProducts(page, productLimit, filter, currency) {
   const limit = Number(productLimit);
   const data = await Product.find()
     .skip((skip - 1) * limit)
-    .limit(limit);
+    .limit(limit)
+    .sort(getOrdering(productsOrdering, filter));
 
-  const trueData = data.map(data => {
+  return data.map(data => {
     data.price = (Number(data.price) / Number(currency.sell)).toFixed(2);
     data.currency = currency.currency;
     return data;
   });
-
-  if (filter === 'ascendingPrice') {
-    return trueData.sort((a, b) => b.price - a.price);
-  }
-
-  if (filter === 'descendingPrice') {
-    return trueData.sort((a, b) => a.price - b.price);
-  }
-
-  if (filter === 'descendingDate') {
-    return trueData.sort((a, b) => a.createDate - b.createDate);
-  }
-
-  if (filter === 'ascendingDate') {
-    return trueData.sort((a, b) => b.createDate - a.createDate);
-  }
-
-  return trueData.sort((a, b) => b.createDate - a.createDate);
 }
 
 async function getOneProductById(id, currency) {
   const data = await Product.findById(`${id}`);
 
   if (!data) {
-    throw errorHandler(`Product with id(${id}) is not found`, 404);
+    throw new CustomError(errorsEnum.PRODUCT_NOT_FOUND, id);
   }
 
   data.price = (Number(data.price) / Number(currency.sell)).toFixed(2);
@@ -79,13 +70,18 @@ async function getOneProductById(id, currency) {
 }
 
 async function deleteProductById(id) {
-  const data = await Product.findByIdAndDelete(id);
+  try {
+    const data = await Product.findByIdAndDelete(id);
+    console.log(data);
 
-  if (!data) {
-    throw errorHandler(`Product with id(${id}) is not found`, 404);
+    if (!data) {
+      throw new CustomError(errorsEnum.PRODUCT_NOT_FOUND, id);
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
   }
-
-  return data;
 }
 
 async function createNewProduct({
@@ -118,7 +114,7 @@ async function updateProductById(id, data) {
   );
 
   if (!product) {
-    throw errorHandler(`Product with id(${id}) is not found`, 404);
+    throw new CustomError(errorsEnum.PRODUCT_NOT_FOUND, id);
   }
 
   return product;

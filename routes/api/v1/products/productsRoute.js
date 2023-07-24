@@ -6,9 +6,9 @@ const {
   deleteProduct,
   createProduct,
   updateProduct,
-} = require('../../controllers/productsController');
-const { auth } = require('../../middlewares/authMiddlware');
-const { isValidObjId } = require('../../middlewares/isValidObjId');
+} = require('../../../../controllers/productsController');
+const { auth } = require('../../../../middlewares/authMiddlware');
+const { isValidObjId } = require('../../../../middlewares/isValidObjId');
 
 /**
  * @openapi
@@ -36,11 +36,14 @@ router.get('/', allProducts);
  *     tags:
  *       - Products
  *     summary: get one product by id.
- *     description: Method for getting one product by id.
+ *     description: Method for getting one product by id. By default limit = 10, page = 1, filter = 
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *       - in: query
+ *         name: limit
+ *         required: false
 
  *
  *     responses:

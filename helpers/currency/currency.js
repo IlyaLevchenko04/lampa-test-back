@@ -1,5 +1,7 @@
 const { CURRENCY_ENUM, CURRENCY_CODE_ENUM } = require('./currencyEnum');
-const { errorHandler } = require('../errors/errorHandler');
+const { errorHandler } = require('../../middlewares/errorHandler');
+const CustomError = require('../errors/customError');
+const errorsEnum = require('../errors/errorsEnum');
 
 async function getCurrency(currencyQuery) {
   const upperCurrency = currencyQuery.toUpperCase();
@@ -26,7 +28,7 @@ async function getCurrency(currencyQuery) {
       return { sell: 1, currency: 'UAH' };
     })
     .catch(err => {
-      throw errorHandler('MonoAPI error; Too many requests', 500);
+      throw new CustomError(errorsEnum.MONO_API_ERROR);
     });
 
   return monoCurrency;
