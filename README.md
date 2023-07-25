@@ -3,6 +3,7 @@
 ## API link
 
 https://products-api-umhe.onrender.com - лінка на апі розміщеному на рендері
+**Роут щоб отримати документацію свагеру**__/api-docs__
 
 Для **_POST, DELETE, PUT_** запитів потрібно авторизуватись. **_GET_** запити
 можна отримати без авторизації
@@ -75,3 +76,5 @@ description, mainPhoto, photos, currency, categoryId}.
 - **DB_HOST**: лінка до MongoDB бази
 - **SECRET_KEY**: секретний ключ для хешування паролю
 - **PORT**: порт на якому запущений сервер
+- **ACCESS_TOKEN_EXPIRE**: через скільки аксес токен стане недійсним
+- **REFRESH_TOKEN_EXPIRE**: через скільки рефреш токен стане недійсним
