@@ -60,6 +60,10 @@ router.get('/:id', isValidObjId, categoryById);
  *       - Categories
  *     summary: create category.
  *     description: Method for creating category.
+ *     parameters:
+ *       - in: body
+ *         name: title
+ *         required: true
  *     responses:
  *       201:
  *         description: Returns created category.
@@ -98,12 +102,16 @@ router.delete('/:id', auth, isValidObjId, deleteCategory);
  * /category/:id:
  *   put:
  *     tags:
- *       - Category
+ *       - Categories
  *     summary: update one category by id.
  *     description: Method for updating one category by id.
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *
+ *       - in: body
+ *         name: title
  *         required: true
  *
  *     responses:
@@ -129,7 +137,22 @@ router.put('/:id', auth, isValidObjId, updateCategory);
  *       - in: path
  *         name: id
  *         required: true
-
+ *       - in: query
+ *         name: currency
+ *         description: what of provided currency u want to see EUR, USD, UAH
+ *         required: false
+ *       - in : query
+ *         name: limit
+ *         description: how many items u want to see in response
+ *         required: false
+ *       - in : query
+ *         name: page
+ *         required: false
+ *         description: what page of items do u need
+ *       - in : query
+ *         name: filter
+ *         description: How u want to sort items ACS_PRICE, ASC_DATE, DESC_PRICE, DESC_DATE
+ *         required: false
  *
  *     responses:
  *       200:

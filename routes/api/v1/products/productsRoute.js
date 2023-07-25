@@ -18,6 +18,24 @@ const { isValidObjId } = require('../../../../middlewares/isValidObjId');
  *       - Products
  *     summary: get all products.
  *     description: Method for getting all products.
+ *     parameters:
+ *       - in: query
+ *         name: currency
+ *         description: what of provided currency u want to see EUR, USD, UAH
+ *         required: false
+ *       - in : query
+ *         name: limit
+ *         description: how many items u want to see in response
+ *         required: false
+ *       - in : query
+ *         name: page
+ *         required: false
+ *         description: what page of items do u need
+ *       - in : query
+ *         name: filter
+ *         description: How u want to sort items ACS_PRICE, ASC_DATE, DESC_PRICE, DESC_DATE
+ *         required: false
+ *
  *     responses:
  *       201:
  *         description: Returns all products.
@@ -36,15 +54,14 @@ router.get('/', allProducts);
  *     tags:
  *       - Products
  *     summary: get one product by id.
- *     description: Method for getting one product by id. By default limit = 10, page = 1, filter = 
+ *     description: Method for getting one product by id. By default limit = 10, page = 1, filter =
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *       - in: query
- *         name: limit
+ *         name: currency
  *         required: false
-
  *
  *     responses:
  *       200:
@@ -69,7 +86,6 @@ router.get('/:id', isValidObjId, getById);
  *       - in: path
  *         name: id
  *         required: true
-
  *
  *     responses:
  *       200:
@@ -90,6 +106,28 @@ router.delete('/:id', auth, isValidObjId, deleteProduct);
  *       - Products
  *     summary: create product.
  *     description: Method for creating product.
+ *     parameters:
+ *       - in: body
+ *         name: price
+ *         required: true
+ *       - in: body
+ *         name: title
+ *         required: true
+ *       - in : body
+ *         name: description
+ *         required: true
+ *       - in : body
+ *         name: mainPhoto
+ *         required: true
+ *       - in : body
+ *         name: photos
+ *         required: true
+ *       - in : body
+ *         name: currency
+ *         required: true
+ *       - in : body
+ *         name: categoryId
+ *         required: true
  *
  *     responses:
  *       201:
@@ -109,6 +147,27 @@ router.post('/', auth, createProduct);
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *       - in: body
+ *         name: price
+ *         required: true
+ *       - in: body
+ *         name: title
+ *         required: true
+ *       - in : body
+ *         name: description
+ *         required: true
+ *       - in : body
+ *         name: mainPhoto
+ *         required: true
+ *       - in : body
+ *         name: photos
+ *         required: true
+ *       - in : body
+ *         name: currency
+ *         required: true
+ *       - in : body
+ *         name: categoryId
  *         required: true
  *
  *     responses:
