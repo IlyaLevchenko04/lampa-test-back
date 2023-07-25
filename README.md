@@ -2,7 +2,8 @@
 
 ## API link
 
-https://products-api-umhe.onrender.com - лінка на апі розміщеному на рендері
+https://products-api-umhe.onrender.com - лінка на апі розміщеному на рендері.
+
 **Роут щоб отримати документацію свагеру**__/api-docs__
 
 Для **_POST, DELETE, PUT_** запитів потрібно авторизуватись. **_GET_** запити
